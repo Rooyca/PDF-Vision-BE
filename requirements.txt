@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+celery==5.2.3
+python-dotenv
+gunicorn
+cloudinary
+pymupdf
+pymongo==3.11.0
+dnspython
+python-multipart
