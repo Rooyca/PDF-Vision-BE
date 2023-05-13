@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY . /app
 
-ENV CELERY_BROKER_URL=redis://redis:6379/0
-ENV CELERY_RESULT_BACKEND=redis://redis:6379/0
+#ENV CELERY_BROKER_URL=redis://localhost:6379/0
+#ENV CELERY_RESULT_BACKEND=redis://localhost:6379/0
 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
