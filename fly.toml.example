@@ -1,0 +1,14 @@
+
+app = "pdf-2-slide-be"
+primary_region = "bog"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[env]
+  MONGO = "mongodb+srv://USR:PASSWORD@CLUSTER/COLLECTION?retryWrites=true&w=majority"
+  CELERY_BROKER_URL = "redis://USER:PASSWORD@CLUSTER"
+  CELERY_RESULT_BACKEND = "redis://USER:PASSWORD@CLUSTER"

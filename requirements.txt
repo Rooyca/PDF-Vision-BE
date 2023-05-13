@@ -1,10 +1,11 @@
 fastapi
 uvicorn
-celery==5.2.3
+celery
 python-dotenv
 gunicorn
-cloudinary
 pymupdf
-pymongo==3.11.0
+pymongo
 dnspython
 python-multipart
+requests
+redis
