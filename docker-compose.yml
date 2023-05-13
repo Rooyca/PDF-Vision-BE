@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - MONGO=mongodb+srv://USER:PASSWORD@CLUSTER/COLLECTION?retryWrites=true&w=majority
+      #- C_FORCE_ROOT=true
+    command: bash -c "celery -A tasks worker --loglevel=info & uvicorn main:app --host 0.0.0.0 --port 8000"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
