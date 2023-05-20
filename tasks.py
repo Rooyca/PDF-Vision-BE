@@ -1,6 +1,6 @@
 from fileinput import filename
 from celery import Celery
-import uuid, os, glob, shutil, fitz, time, requests
+import uuid, os, glob, shutil, fitz, time, boto3, requests, random
 
 from fastapi import HTTPException
 from db import PDFVision
@@ -9,6 +9,12 @@ celery = Celery(__name__)
 
 celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL")
 celery.conf.result_backend = os.environ.get("CELERY_RESULT_BACKEND")
+
+
+s3 = boto3.resource('s3', endpoint_url=os.environ['S3_ENDPOINT'],
+                       aws_access_key_id=os.environ['KEY_ID'], aws_secret_access_key=os.environ['KEY_SECRET'])
+
+bucket = s3.Bucket('tmpimg')
 
 def remove_pdf(slides_id):
     file = f"files/pdf/{slides_id}.pdf"
@@ -32,14 +38,15 @@ def get_pdf_id(owner_email: str, slides_name: str, slides_id: str, delKey: str):
 
     for page in doc:  
         pix = page.get_pixmap()  
-        pix.save(f"files/img/{newDir}/{page.number}.png") 
-        url_base_t = f'https://transfer.sh/{slides_id}.png'
-        file_path = f"files/img/{newDir}/{page.number}.png" 
+        pix.save(f"files/img/{newDir}/{page.number}.png")
 
-        with open(file_path, 'rb') as f:
-            response = requests.put(url_base_t, data=f)
+        file_path = f"files/img/{newDir}/{page.number}.png"
+        sub = random.randrange(0,9999) 
+        object_key = f'{slides_id}_{sub}.png'
 
-        all_urls.append({'url':response.text.replace('transfer.sh/', 'transfer.sh/get/'), 'url_delete':response.headers['X-Url-Delete']})
+        bucket.upload_file(file_path, object_key)
+
+        all_urls.append({'url': 'https://ronaldc.click/'+object_key})
 
     page_count = doc.page_count
     del doc
@@ -65,8 +72,5 @@ def get_pdf_id(owner_email: str, slides_name: str, slides_id: str, delKey: str):
 
 @celery.task(name='del_pdf_by_id',  max_retries=3, ignore_result=True)
 def del_pdf_by_id(slides_id: str):
-    slide = PDFVision.find_one({'slidesID': slides_id})
-    for url in slide['urls']:
-        requests.delete(url['url_delete'])
     del_doc = PDFVision.delete_one({'slidesID': slides_id})
     return {'status':'ok'}
