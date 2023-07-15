@@ -15,6 +15,30 @@ This is the backend of PDF2Slide. It is built using Python and FastApi. It uses 
 
 We currently support 3 ways to install and run the backend. The first one is using Docker, the second one is using Docker-compose and the third one is manually installing the dependencies and running the backend.
 
+### Docker-compose (recommended)
+
+To run the backend using Docker-compose you should edit the file `docker-compose.yml` and change the following variables:
+
+```bash
+- SMTP_SERVER=smtp-relay.sendinblue.com
+- SMTP_USER=user@mail.com
+- SMTP_PASS=password
+- SMTP_PORT=587
+- SENDER=sender@mail.com
+- S3_ENDPOINT=https://11111.r2.cloudflarestorage.com
+- KEY_ID=id
+- KEY_SECRET=secret
+- URL_STORAGE=https://example.com/
+```
+
+For `S3_ENDPOINT` you can use the cloudflare storage or any other storage that supports S3.
+
+After that you can run the following command to run the entire stack:
+
+```bash
+docker-compose up -d
+```
+
 ### Docker
 
 To run the backend using Docker you need to have Docker installed on your machine. You can find instructions on how to install Docker [here](https://docs.docker.com/get-docker/).
@@ -23,9 +47,9 @@ Once you have Docker installed you can run the following command to build the ba
 
 ```bash
 docker run -e MONGO='mongodb://localhost:27017/' \
-		   -e CELERY_BROKER_URL='redis://localhost:6379/0' \
-		   -e CELERY_RESULT_BACKEND='redis://localhost:6379/0' \
-		    rooyca/pdf2slide-be:slim
+       -e CELERY_BROKER_URL='redis://localhost:6379/0' \
+       -e CELERY_RESULT_BACKEND='redis://localhost:6379/0' \
+        rooyca/pdf2slide-be:slim
 ```
 
 We need to make sure that MongoDB and Redis are running before running the command above. You can run the following commands to run MongoDB and Redis using Docker:
@@ -34,23 +58,6 @@ We need to make sure that MongoDB and Redis are running before running the comma
 docker run -d -p 27017:27017 mongo
 docker run -d -p 6379:6379 redis
 ```
-
-### Docker-compose
-
-To run the backend using Docker-compose you can clone this repository and run the following command:
-
-
-```bash
-docker-compose up -d
-```
-
-This will run Redis and the backend, but not MongoDB. You can run MongoDB using Docker as well:
-
-```bash
-docker run -d -p 27017:27017 mongo
-```
-
-**Why not add all in one single `docker-compose`? Because you might want to use MongoDB Atlas (as me) or any other MongoDB service.**
 
 ### Manual
 

@@ -2,11 +2,9 @@ fastapi
 uvicorn
 celery
 python-dotenv
-gunicorn
 pymupdf
 pymongo
 dnspython
 python-multipart
-requests
 redis
 boto3

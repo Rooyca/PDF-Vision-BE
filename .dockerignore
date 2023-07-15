@@ -1,7 +1,9 @@
-docker-compose.yml
-Dockerfile*
 README*
+**local**
 .env*
 .gitignore
 .git
 fly.toml*
+docker-compose*
+/__pycache__
+.idea*

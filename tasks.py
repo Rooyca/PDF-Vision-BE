@@ -1,6 +1,6 @@
 from fileinput import filename
 from celery import Celery
-import uuid, os, glob, shutil, fitz, time, boto3, requests, random
+import uuid, os, shutil, fitz, time, boto3, random
 
 from fastapi import HTTPException
 from db import PDFVision
@@ -46,7 +46,7 @@ def get_pdf_id(owner_email: str, slides_name: str, slides_id: str, delKey: str):
 
         bucket.upload_file(file_path, object_key)
 
-        all_urls.append({'url': 'https://ronaldc.click/'+object_key})
+        all_urls.append({'url': os.environ.get("URL_STORAGE")+object_key})
 
     page_count = doc.page_count
     del doc
